@@ -77,7 +77,7 @@ const createTeamTableQuery = `
 executeCreateQuizTable(createQuizTableQuery).then(result => {
     if (result) {
         //pool.query(`DROP TABLE "quiz"`)
-        console.log("Table created")
+        //console.log("Table created")
     }
 })
 
