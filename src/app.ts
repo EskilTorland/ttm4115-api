@@ -27,11 +27,13 @@ app.use(bodyParser.json())
 //     password: process.env.DB_PASSWORD,
 //     port: parseInt(process.env.DB_PORT || "5432")
 // })
-const proConfig = {
-    connectionString: "postgres://vtydnzuxsjacni:d04c83ca1a943b2818a100071044f43da6abfb728965652b9099131a0dc9a533@ec2-63-32-248-14.eu-west-1.compute.amazonaws.com:5432/d6uq3tjgea5nbv"
-}
 
-const pool = new Pool(proConfig)
+const pool = new Pool({
+    connectionString: "postgres://vtydnzuxsjacni:d04c83ca1a943b2818a100071044f43da6abfb728965652b9099131a0dc9a533@ec2-63-32-248-14.eu-west-1.compute.amazonaws.com:5432/d6uq3tjgea5nbv",
+    ssl:{
+        rejectUnauthorized:false
+    }
+    })
 
 const connectToDb = async () => {
     try {
