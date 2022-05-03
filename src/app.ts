@@ -18,7 +18,23 @@ interface QuizData {
     question: string,
     answers: Answers[]
 }
-//app.use(cors)
+
+const corsOptions = {
+    origin: (origin:any, callback:any) => {
+      callback(null, true);
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Access-Control-Allow-Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+    credentials: true
+  };
+
+const options: cors.CorsOptions = {
+    allowedHeaders: ["Access-Control-Allow-Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true
+}
+
+app.use(cors(options))
 app.use(bodyParser.json())
 
 // const pool = new Pool({
