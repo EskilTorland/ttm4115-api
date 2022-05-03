@@ -104,23 +104,6 @@ const getQuiz = async () => {
 
 
 
-const updateQuiz = async () => {
-    try {
-        let quiz: QuizData[] | undefined = await fetchOpenTdb()
-        if(quiz != undefined){
-            await pool.query(`DELETE FROM "quiz"`)
-            for(let quizEntry of quiz){
-                await pool.query(
-                    `INSERT INTO quiz (quiz)
-                    VALUES ($1)`, [quizEntry]
-                    )
-                }
-           }
-    } catch (e) {
-        console.error(e)
-    }
-}
-
 const fetchOpenTdb = async() =>{
     try{
         
@@ -146,11 +129,28 @@ const fetchOpenTdb = async() =>{
     }
 }
 
-const createNewQuiz = () => {
-    setInterval(() => updateQuiz(), 5000)
-}
-
-const getTeams =async() => {
+const updateQuiz = async () => {
+    try {
+        let quiz: QuizData[] | undefined = await fetchOpenTdb()
+        if(quiz != undefined){
+            await pool.query(`DELETE FROM "quiz"`)
+            for(let quizEntry of quiz){
+                await pool.query(
+                    `INSERT INTO quiz (quiz)
+                    VALUES ($1)`, [quizEntry]
+                    )
+                }
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+    
+    const createNewQuiz = () => {
+        setInterval(() => updateQuiz(), 5000)
+    }
+    
+    const getTeams =async() => {
     try {
         return await pool.query(`SELECT * FROM "teams"`)
     } catch (e) {
