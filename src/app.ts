@@ -20,13 +20,18 @@ interface QuizData {
 
 app.use(bodyParser.json())
 
-const pool = new Pool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT || "5432")
-})
+// const pool = new Pool({
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USER,
+//     database: process.env.DB_NAME,
+//     password: process.env.DB_PASSWORD,
+//     port: parseInt(process.env.DB_PORT || "5432")
+// })
+const proConfig = {
+    connectionString: process.env.DATABASE_URL
+}
+
+const pool = new Pool(proConfig)
 
 const connectToDb = async () => {
     try {
