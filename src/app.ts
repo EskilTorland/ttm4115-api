@@ -171,6 +171,7 @@ app.get("/test", (req: Request, res: Response, next: NextFunction) => {
 })
 app.get("/getQuiz", (req: Request, res: Response, next: NextFunction) => {
     getQuiz().then(result => res.send(result?.rows))
+    getQuiz().then(result => console.log(result?.rows))
 })
 
 app.put("/updateTeam", (req: Request, res: Response, next: NextFunction) =>{
@@ -181,12 +182,35 @@ app.put("/updateTeam", (req: Request, res: Response, next: NextFunction) =>{
 app.get("/getTeams",(req: Request, res: Response, next: NextFunction) =>{
     res.send([{
         "name":"Office1",
-        "score":45
+        "score":145
     }
 ,{
     "name":"Office2",
-        "score":36
-}])
+        "score":136
+}
+,{
+    "name":"Office3",
+    "score":111
+}
+,{
+    "name":"Office4",
+    "score":96
+}
+,{
+    "name":"Office5",
+    "score":76
+}
+,
+{
+    "name":"Office6",
+    "score":56
+}
+,
+{
+    "name":"Office7",
+    "score":37
+}
+])
 })
 
 
