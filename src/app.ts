@@ -166,9 +166,11 @@ const updateQuiz = async () => {
     }
     
     const createNewQuiz = () => {
-        setInterval(() => updateQuiz(), 5000)
+        setInterval(() => updateQuiz(), Time)
     }
     
+    createNewQuiz()
+
     const getTeams =async() => {
     try {
         return await pool.query(`SELECT * FROM "teams"`)
@@ -190,8 +192,8 @@ const updateTeam = async (score: number, teamName: string) =>{
 }
 
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
-    updateQuiz().then(result => console.log("success"))
-    fetchOpenTdb().then(result => console.log(result))
+    updateQuiz().then(result => res.send("success"))
+    
 })
 app.get("/getQuiz", (req: Request, res: Response, next: NextFunction) => {
     getQuiz().then(result => res.send(result?.rows))
