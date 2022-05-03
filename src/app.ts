@@ -18,7 +18,7 @@ interface QuizData {
     question: string,
     answers: Answers[]
 }
-app.use(cors)
+//app.use(cors)
 app.use(bodyParser.json())
 
 // const pool = new Pool({
