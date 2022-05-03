@@ -21,7 +21,7 @@ const createTeamTableQuery = `
         "id" SERIAL,
         "name" VARCHAR(128) NOT NULL,
         "score" INT
-    )
+    );
 `
 
 const createQuizTable = async () => {
@@ -48,7 +48,7 @@ const getQuiz = (request:Request, response:Request) =>{
     }
 
 
-const updateQuiz = async() =>{
+const updateQuiz = async(question, answers) =>{
     try {
         await pool.query(`DELETE * FROM quiz`)
         await pool.query(
