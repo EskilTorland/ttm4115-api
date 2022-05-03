@@ -166,7 +166,7 @@ const updateQuiz = async () => {
     }
     
     const createNewQuiz = () => {
-        setInterval(() => updateQuiz(), Time)
+        setInterval(() => updateQuiz(), 7200000)
     }
     
     createNewQuiz()
