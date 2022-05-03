@@ -7,6 +7,7 @@ import { Pool } from 'pg'
 import https from 'https'
 import fetch from 'node-fetch'
 import bodyParser, { json, BodyParser, urlencoded } from "body-parser"
+import cors from 'cors'
 
 interface Answers {
     answerText: string,
@@ -17,7 +18,7 @@ interface QuizData {
     question: string,
     answers: Answers[]
 }
-
+app.use(cors)
 app.use(bodyParser.json())
 
 // const pool = new Pool({
