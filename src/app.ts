@@ -1,14 +1,12 @@
 import express, { NextFunction, Request, Response } from "express"
 import dotenv from "dotenv"
 
-const app = express()
-dotenv.config()
 import { Pool } from 'pg'
-import https from 'https'
 import fetch from 'node-fetch'
 import bodyParser, { json, BodyParser, urlencoded } from "body-parser"
 import cors from 'cors'
 
+//Datatypes for quiz stored in heroku postgres database
 interface Answers {
     answerText: string,
     answerCorrect: boolean
@@ -19,32 +17,20 @@ interface QuizData {
     answers: Answers[]
 }
 
-const corsOptions = {
-    origin: (origin:any, callback:any) => {
-      callback(null, true);
-    },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Access-Control-Allow-Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
-    credentials: true
-  };
-
+//Options for Cross-Origin Resource Sharing
 const options: cors.CorsOptions = {
     allowedHeaders: ["Access-Control-Allow-Origin", "Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true
 }
 
+//Config for env variables and Express app
+dotenv.config()
+const app = express()
 app.use(cors(options))
 app.use(bodyParser.json())
 
-// const pool = new Pool({
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USER,
-//     database: process.env.DB_NAME,
-//     password: process.env.DB_PASSWORD,
-//     port: parseInt(process.env.DB_PORT || "5432")
-// })
-
+//Create databasepool
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl:{
@@ -52,6 +38,7 @@ const pool = new Pool({
     }
     })
 
+    //Connect to database pool
 const connectToDb = async () => {
     try {
         await pool.connect()
@@ -60,57 +47,6 @@ const connectToDb = async () => {
     }
 }
 connectToDb()
-
-const executeCreateQuizTable = async (query: string) => {
-    try {
-        await pool.query(query)
-        return true
-    } catch (e) {
-        console.error(e)
-        return false
-    }
-}
-
-const executeCreateTeamTable = async (query: string) => {
-    try {
-        await pool.query(query)
-        return true
-    } catch (e) {
-        console.error(e)
-        return false
-    }
-}
-
-const createQuizTableQuery = `
-CREATE TABLE IF NOT EXISTS "quiz" (
-    "id" SERIAL,
-    "quiz" jsonb NOT NULL
-);`
-
-const createTeamTableQuery = `
-    CREATE TABLE IF NOT EXISTS "teams" (
-        "id" SERIAL,
-        "name" VARCHAR(128) NOT NULL,
-        "score" INT,
-        PRIMARY KEY("name")
-    );
-`
-
-
-
-executeCreateQuizTable(createQuizTableQuery).then(result => {
-    if (result) {
-        //pool.query(`DROP TABLE "quiz"`)
-        console.log("Table created")
-    }
-})
-
-executeCreateTeamTable(createTeamTableQuery).then(result => {
-    if(result) {
-            //pool.query(`DROP TABLE "teams"`)
-        console.log('Team table created')
-    }
-})
 
 const getQuiz = async () => {
     try {
@@ -121,11 +57,8 @@ const getQuiz = async () => {
 
 }
 
-
-
 const fetchOpenTdb = async() =>{
-    try{
-        
+    try{       
         const response = await fetch("https://opentdb.com/api.php?amount=10&type=multiple",{
             method: 'GET',
         })
@@ -140,7 +73,6 @@ const fetchOpenTdb = async() =>{
             let quizEntry:QuizData = {question: result.results[i].question, answers: answerData}
             quiz.push(quizEntry)
         }
-        console.log(quiz)
         return quiz
     }
     catch(e){
@@ -165,33 +97,16 @@ const updateQuiz = async () => {
         }
     }
     
+
     const createNewQuiz = () => {
-        setInterval(() => updateQuiz(), 7200000)
-    }
+    setInterval(() => updateQuiz(), 5000)
+}
     
-    createNewQuiz()
+createNewQuiz()
 
-    const getTeams =async() => {
-    try {
-        return await pool.query(`SELECT * FROM "teams"`)
-    } catch (e) {
-        console.error(e)
-    }
-}
 
-const updateTeam = async (score: number, teamName: string) =>{
-    try {
-        
-        await pool.query(`
-        UPDATE teams SET score = score + $1 WHERE name = $2
-        `,
-         [score,teamName])
-    } catch (e) {
-        console.error(e)
-    }
-}
 
-app.get("/test", (req: Request, res: Response, next: NextFunction) => {
+app.get("/updateQuiz", (req: Request, res: Response, next: NextFunction) => {
     updateQuiz().then(result => res.send("success"))
     
 })
@@ -199,11 +114,6 @@ app.get("/getQuiz", (req: Request, res: Response, next: NextFunction) => {
     getQuiz().then(result => res.send(result?.rows))
     getQuiz().then(result => console.log(result?.rows))
 })
-
-app.put("/updateTeam", (req: Request, res: Response, next: NextFunction) =>{
-    updateTeam(req.body.score,req.body.name)
-    console.log(req.body.name)
-}) 
 
 app.get("/getTeams",(req: Request, res: Response, next: NextFunction) =>{
     res.send([{
