@@ -102,6 +102,7 @@ const updateQuiz = async () => {
     
 //Create a new quiz every two hours
 //*Does not work on heroku deployment as image is put to sleep after some time
+//Call /updateQuiz instead to refresh quiz
 const createNewQuiz = () => {
 setInterval(() => updateQuiz(), 7200000)
 }
