@@ -48,6 +48,7 @@ const connectToDb = async () => {
 }
 connectToDb()
 
+//Function to execute getQuiz query
 const getQuiz = async () => {
     try {
         return await pool.query(`SELECT * FROM "quiz"`)
@@ -57,6 +58,7 @@ const getQuiz = async () => {
 
 }
 
+//Get questions and answers from opentdb and convert them into datatypes to fit our database
 const fetchOpenTdb = async() =>{
     try{       
         const response = await fetch("https://opentdb.com/api.php?amount=10&type=multiple",{
@@ -80,6 +82,7 @@ const fetchOpenTdb = async() =>{
     }
 }
 
+//Removes old quiz from database and inserts a new one fethced from opentdb
 const updateQuiz = async () => {
     try {
         let quiz: QuizData[] | undefined = await fetchOpenTdb()
@@ -97,15 +100,16 @@ const updateQuiz = async () => {
         }
     }
     
-
-    const createNewQuiz = () => {
-    setInterval(() => updateQuiz(), 5000)
+//Create a new quiz every two hours
+//*Does not work on heroku deployment as image is put to sleep after some time
+const createNewQuiz = () => {
+setInterval(() => updateQuiz(), 7200000)
 }
     
 createNewQuiz()
 
 
-
+//Routes for REST API
 app.get("/updateQuiz", (req: Request, res: Response, next: NextFunction) => {
     updateQuiz().then(result => res.send("success"))
     
